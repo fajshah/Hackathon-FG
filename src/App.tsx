@@ -27,7 +27,7 @@ import {
   generateFortyGuardGrid,
   buildCorridorRoutes
 } from './data/fortyguardPhoenixData';
-import { analyzeRoutePair } from './utils/thermalPhysics';
+import { analyzeRoutePair, createAutonomousAuditBrief } from './utils/thermalPhysics';
 import { Sparkles, Info, ShieldCheck, TreePine, Flame, AlertCircle } from 'lucide-react';
 
 export default function App() {
@@ -42,7 +42,6 @@ export default function App() {
   const [isSimulatorOpen, setIsSimulatorOpen] = useState<boolean>(false);
   const [isAuditModalOpen, setIsAuditModalOpen] = useState<boolean>(false);
   const [isAgentRunning, setIsAgentRunning] = useState<boolean>(false);
-  const [auditBrief, setAuditBrief] = useState<AutonomousAuditBrief | null>(null);
 
   // Generate 20m² microclimate grid based on current climate scenario
   const gridCells = useMemo(() => {
@@ -66,6 +65,16 @@ export default function App() {
       currentPersona
     );
   }, [selectedPreset, currentScenario, arterialRoute, coolCanopyRoute, currentPersona]);
+
+  // Always maintain an instant computed OSHA verdict brief
+  const [auditBrief, setAuditBrief] = useState<AutonomousAuditBrief>(() => {
+    return createAutonomousAuditBrief(selectedPreset, currentScenario, currentPersona, comparison);
+  });
+
+  // Sync instant OSHA brief whenever physics or persona parameters change
+  useEffect(() => {
+    setAuditBrief(createAutonomousAuditBrief(selectedPreset, currentScenario, currentPersona, comparison));
+  }, [selectedPreset, currentScenario, currentPersona, comparison]);
 
   // Execute Server-Side Gemini Multi-Agent Decision Engine
   const runMultiAgentDecision = useCallback(async () => {
@@ -92,16 +101,16 @@ export default function App() {
         setAuditBrief(data.brief);
       }
     } catch (err) {
-      console.error('Multi-agent decision error:', err);
+      console.warn('Multi-agent server decision notice (local physics core active):', err);
     } finally {
       setIsAgentRunning(false);
     }
   }, [selectedPreset, currentScenario, currentPersona, comparison, gridCells]);
 
-  // Run autonomous decision on initial mount or preset change
+  // Trigger agent sync when scenario, preset, or persona changes
   useEffect(() => {
     runMultiAgentDecision();
-  }, [selectedPreset.id, currentPersona.id]);
+  }, [selectedPreset.id, currentPersona.id, currentScenario.id]);
 
   return (
     <div className="min-h-screen bg-[#050505] text-[#F0F0F0] flex flex-col font-sans selection:bg-[#00FFCC] selection:text-black">

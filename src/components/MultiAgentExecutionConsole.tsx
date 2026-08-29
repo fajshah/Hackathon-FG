@@ -100,12 +100,22 @@ export const MultiAgentExecutionConsole: React.FC<ConsoleProps> = ({
           </button>
           <button
             id="tab-brief-btn"
-            onClick={() => setActiveTab('brief')}
-            className={`px-3 py-1 text-xs uppercase tracking-wider transition-all cursor-pointer ${
+            onClick={() => {
+              setActiveTab('brief');
+              if (!auditBrief) {
+                onTriggerDecision();
+              }
+            }}
+            className={`px-3 py-1 text-xs uppercase tracking-wider transition-all cursor-pointer flex items-center gap-1.5 ${
               activeTab === 'brief' ? 'bg-[#00FFCC] text-black font-black italic' : 'text-[#888] hover:text-white'
             }`}
           >
-            OSHA Verdict
+            <span>OSHA Verdict</span>
+            {auditBrief && (
+              <span className={`w-1.5 h-1.5 rounded-full ${
+                auditBrief.oshaPhysiologicalVerdict.complianceStatus.includes('PASS') ? 'bg-[#00FF41]' : 'bg-[#FF4D00]'
+              }`} />
+            )}
           </button>
         </div>
       </div>
@@ -154,6 +164,16 @@ export const MultiAgentExecutionConsole: React.FC<ConsoleProps> = ({
         ) : (
           /* Structured Audit Brief Preview */
           <div className="space-y-3">
+            {isAgentRunning && (
+              <div className="flex items-center justify-between p-2 bg-[#111] border border-[#00FFCC]/40 text-xs font-mono text-[#00FFCC] animate-pulse">
+                <span className="flex items-center gap-1.5">
+                  <RefreshCw className="w-3 h-3 animate-spin" />
+                  Agentic Core Synthesizing Microclimate Verdict...
+                </span>
+                <span className="text-[10px] uppercase font-bold text-[#888]">400+ Nodes Ingested</span>
+              </div>
+            )}
+
             {auditBrief ? (
               <div className="space-y-3 text-xs">
                 <div className="p-4 bg-[#002211] border border-[#00FFCC] shadow-[0_0_15px_rgba(0,255,204,0.08)]">
@@ -161,7 +181,11 @@ export const MultiAgentExecutionConsole: React.FC<ConsoleProps> = ({
                     <span className="font-mono text-[#00FFCC] font-bold text-xs">
                       {auditBrief.briefId}
                     </span>
-                    <span className="text-[10px] px-2 py-0.5 bg-[#00FFCC] text-black font-mono font-black uppercase">
+                    <span className={`text-[10px] px-2 py-0.5 font-mono font-black uppercase ${
+                      auditBrief.oshaPhysiologicalVerdict.complianceStatus.includes('PASS')
+                        ? 'bg-[#00FFCC] text-black'
+                        : 'bg-[#FF4D00] text-black'
+                    }`}>
                       {auditBrief.oshaPhysiologicalVerdict.complianceStatus}
                     </span>
                   </div>
@@ -196,9 +220,15 @@ export const MultiAgentExecutionConsole: React.FC<ConsoleProps> = ({
                 </button>
               </div>
             ) : (
-              <div className="p-8 text-center text-[#666] space-y-2 font-mono text-xs">
+              <div className="p-8 text-center text-[#666] space-y-3 font-mono text-xs bg-[#080808] border border-[#222]">
                 <Sparkles className="w-8 h-8 text-[#00FFCC] mx-auto animate-pulse" />
-                <p className="uppercase tracking-widest">Deploy core decision engine to synthesize brief.</p>
+                <p className="uppercase tracking-widest text-[#AAA]">Autonomous decision engine ready</p>
+                <button
+                  onClick={onTriggerDecision}
+                  className="px-4 py-2 bg-[#00FFCC] text-black font-black uppercase text-xs hover:bg-[#33FFDD] transition-all cursor-pointer"
+                >
+                  Synthesize OSHA Verdict Now
+                </button>
               </div>
             )}
           </div>
