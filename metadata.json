@@ -1,0 +1,6 @@
+{
+  "name": "CoolRoute Climate Intelligence Core",
+  "description": "Autonomous Multi-Agent Decision Engine analyzing FortyGuard 20m² street-level 2m ambient thermal datasets and computing microclimate deltas for OSHA/EPA heat resilience routing across Phoenix, AZ.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

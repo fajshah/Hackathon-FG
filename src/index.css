@@ -1,0 +1,42 @@
+@import "tailwindcss";
+
+@layer base {
+  body {
+    font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background-color: #050505;
+    color: #F0F0F0;
+  }
+  
+  .font-display {
+    font-family: 'Chakra Petch', 'Space Grotesk', sans-serif;
+  }
+  
+  .font-mono {
+    font-family: 'JetBrains Mono', monospace;
+  }
+}
+
+/* High contrast custom scrollbars */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: #050505;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #262626;
+  border-radius: 0px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #FF4D00;
+}
+
+/* Sharp focus outlines for accessibility */
+*:focus-visible {
+  outline: 2px solid #FF4D00;
+  outline-offset: 1px;
+}
